@@ -5,7 +5,8 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "BookstoreMongoDBConnection": "mongodb://localhost:27017"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7126;http://localhost:5126"
@@ -15,7 +16,8 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "BookstoreMongoDBConnection": "mongodb://localhost:27017"
       }
     },
     "Docker": {
@@ -23,7 +25,11 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "publishAllPorts": true,
-      "useSSL": true
+      "useSSL": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "BookstoreMongoDBConnection": "mongodb://localhost:27017"
+      }
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",

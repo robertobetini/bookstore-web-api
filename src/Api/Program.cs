@@ -1,15 +1,25 @@
+using Core.Repositories.Interfaces;
+using Core.Services;
+using Core.Services.Interfaces;
+using Infrastructure.DbContexts;
+using Infrastructure.DbContexts.Interfaces;
+using Infrastructure.Repositories;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen();
+
+ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -23,3 +33,15 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static void ConfigureServices(IServiceCollection services)
+{
+    services
+        .AddSingleton<IBookService, BookService>();
+
+    var mongoConnectionString = Environment.GetEnvironmentVariable("BookstoreMongoDBConnection");
+    services
+        .AddSingleton<IBookRepository, BookRepository>()
+        .AddSingleton<IBookstoreMongoDBContext, BookstoreMongoDBContext>(
+            provider => new BookstoreMongoDBContext(mongoConnectionString));
+}
