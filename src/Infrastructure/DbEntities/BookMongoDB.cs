@@ -1,4 +1,6 @@
 ﻿using Core.Entities.Enums;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Infrastructure.DbEntities;
 
@@ -13,6 +15,7 @@ class BookMongoDB : MongoDBEntity
     public int Quantity { get; set; }
     public double Price { get; set; }
     public int Year { get; set; }
+    [BsonRepresentation(BsonType.String)]
     public BookPreservation Preservation { get; set; }
 
     public BookMongoDB() { }

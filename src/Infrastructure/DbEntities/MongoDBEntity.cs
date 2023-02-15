@@ -1,10 +1,12 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Infrastructure.DbEntities;
 
 abstract class MongoDBEntity
 {
     [BsonId]
-    public virtual string Id { get; set; }
-    public DateTime Created { get; set; } = DateTime.UtcNow;
+    [BsonRepresentation(BsonType.ObjectId)]
+    public virtual string Id { get; init; } = ObjectId.GenerateNewId().ToString();
+    public DateTime Created { get; init; } = DateTime.UtcNow;
 }

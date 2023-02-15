@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Entities.Enums;
 using Core.Repositories.Interfaces;
 using Infrastructure.Adapters;
 using Infrastructure.DbContexts.Interfaces;
@@ -11,27 +12,97 @@ public class BookRepository : IBookRepository
 {
     private readonly IMongoCollection<BookMongoDB> _collection;
     private readonly FilterDefinitionBuilder<BookMongoDB> _bookFilter = Builders<BookMongoDB>.Filter;
+    private readonly UpdateDefinitionBuilder<BookMongoDB> _bookUpdate = Builders<BookMongoDB>.Update;
 
     public BookRepository(IBookstoreMongoDBContext context)
     {
-        _collection = context.Database.GetCollection<BookMongoDB>("books") ;
+        _collection = context.Database.GetCollection<BookMongoDB>("books");
     }
 
-    public async Task<IEnumerable<Book>> GetMany()
+    public async Task<IEnumerable<Book>> GetManyAsync(CancellationToken cancellationToken = default)
     {
         var result = (await _collection
-            .FindAsync(_bookFilter.Empty))
+            .FindAsync(_bookFilter.Empty, cancellationToken: cancellationToken))
             .ToEnumerable();
 
         return BookAdapter.ToDomainEntities(result);
     }
 
-    public async Task<Book> GetOne()
+    public async Task<Book> GetOneAsync(string bookId, CancellationToken cancellationToken = default)
     {
+        var filter = _bookFilter.Eq(b => b.Id, bookId);
         var result = await _collection
-            .Find(_bookFilter.Empty)
-            .FirstOrDefaultAsync();
+            .Find(filter)
+            .FirstOrDefaultAsync(cancellationToken);
 
         return BookAdapter.ToDomainEntity(result);
+    }
+
+    public async Task<string> Create(Book book, CancellationToken cancellationToken = default)
+    {
+        var bookMongoDB = BookAdapter.ToMongoDBEntity(book);
+        await _collection.InsertOneAsync(bookMongoDB, cancellationToken: cancellationToken);
+        return bookMongoDB.Id;
+    }
+
+    public async Task UpdateAsync(string bookId, Book book, CancellationToken cancellationToken = default)
+    {
+        var filter = _bookFilter.Eq(b => b.Id, bookId);
+        var updates = new List<UpdateDefinition<BookMongoDB>>();
+
+        if (book.Title is not default(string))
+        {
+            updates.Add(_bookUpdate.Set(b => b.Title, book.Title));
+        }
+
+        if (book.Author is not default(string))
+        {
+            updates.Add(_bookUpdate.Set(b => b.Author, book.Author));
+        }
+
+        if (book.Edition is not default(int))
+        {
+            updates.Add(_bookUpdate.Set(b => b.Edition, book.Edition));
+        }
+
+        if (book.Language is not default(string))
+        {
+            updates.Add(_bookUpdate.Set(b => b.Language, book.Language));
+        }
+
+        if (book.Publisher is not default(string))
+        {
+            updates.Add(_bookUpdate.Set(b => b.Publisher, book.Publisher));
+        }
+
+        if (book.Pages is not default(int))
+        {
+            updates.Add(_bookUpdate.Set(b => b.Pages, book.Pages));
+        }
+
+        if (book.Price is not default(int))
+        {
+            updates.Add(_bookUpdate.Set(b => b.Price, book.Price));
+        }
+
+        if (book.Year is not default(int))
+        {
+            updates.Add(_bookUpdate.Set(b => b.Year, book.Year));
+        }
+
+        if (book.Preservation is not BookPreservation.Undefined)
+        {
+            updates.Add(_bookUpdate.Set(b => b.Preservation, book.Preservation));
+        }
+
+        var finalUpdate = _bookUpdate.Combine(updates);
+
+        _ = await _collection.UpdateOneAsync(filter, finalUpdate, cancellationToken: cancellationToken);
+    }
+
+    public async Task DeleteAsync(string bookId, CancellationToken cancellationToken = default)
+    {
+        var filter = _bookFilter.Eq(b => b.Id, bookId);
+        _ = await _collection.DeleteOneAsync(filter, cancellationToken: cancellationToken);
     }
 }

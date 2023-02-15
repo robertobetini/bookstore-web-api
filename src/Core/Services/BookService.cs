@@ -14,14 +14,14 @@ public class BookService : IBookService
         _bookRepository = bookRepository;
     }
 
-    public async Task<IEnumerable<Book>> GetMany()
+    public async Task<IEnumerable<Book>> GetManyAsync(CancellationToken cancellationToken = default)
     {
-        return await _bookRepository.GetMany();
+        return await _bookRepository.GetManyAsync(cancellationToken);
     }
 
-    public async Task<Book> GetOne()
+    public async Task<Book> GetOneAsync(string bookId, CancellationToken cancellationToken = default)
     {
-        var book = await _bookRepository.GetOne();
+        var book = await _bookRepository.GetOneAsync(bookId, cancellationToken);
 
         if (book is null)
         {
@@ -29,5 +29,20 @@ public class BookService : IBookService
         }
 
         return book;
+    }
+
+    public async Task<string> CreateAsync(Book book, CancellationToken cancellationToken = default)
+    {
+        return await _bookRepository.Create(book, cancellationToken);
+    }
+
+    public async Task UpdateAsync(string bookId, Book book, CancellationToken cancellationToken = default)
+    {
+        await _bookRepository.UpdateAsync(bookId, book, cancellationToken);
+    }
+
+    public async Task DeleteAsync(string bookId, CancellationToken cancellationToken = default)
+    {
+        await _bookRepository.DeleteAsync(bookId, cancellationToken);
     }
 }
