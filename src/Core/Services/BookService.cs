@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Exceptions;
 using Core.Repositories.Interfaces;
 using Core.Services.Interfaces;
 
@@ -20,6 +21,13 @@ public class BookService : IBookService
 
     public async Task<Book> GetOne()
     {
-        return await _bookRepository.GetOne();
+        var book = await _bookRepository.GetOne();
+
+        if (book is null)
+        {
+            throw new BookNotFoundException();
+        }
+
+        return book;
     }
 }

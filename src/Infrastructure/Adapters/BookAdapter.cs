@@ -5,8 +5,13 @@ namespace Infrastructure.Adapters;
 
 static class BookAdapter
 {
-    public static Book ToDomainEntity(BookMongoDB bookMongoDB)
+    public static Book ToDomainEntity(BookMongoDB? bookMongoDB)
     {
+        if (bookMongoDB is null)
+        {
+            return default;
+        }
+
         return new Book(
             bookMongoDB.Title,
             bookMongoDB.Author,
@@ -22,6 +27,11 @@ static class BookAdapter
 
     public static BookMongoDB ToMongoDBEntity(Book book)
     {
+        if (book is null)
+        {
+            return default;
+        }
+
         return new BookMongoDB(
             book.Title,
             book.Author,
