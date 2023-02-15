@@ -43,6 +43,18 @@ public class BookService : IBookService
 
     public async Task DeleteAsync(string bookId, CancellationToken cancellationToken = default)
     {
+        var book = await GetOneAsync(bookId, cancellationToken);
+
+        if (book is null)
+        {
+            throw new BookNotFoundException();
+        }
+
+        if (book.IsDeleted)
+        {
+            throw new BookAlreadyDeletedException();
+        }
+
         await _bookRepository.DeleteAsync(bookId, cancellationToken);
     }
 }

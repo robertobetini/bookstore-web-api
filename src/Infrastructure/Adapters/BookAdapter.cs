@@ -22,7 +22,8 @@ static class BookAdapter
             bookMongoDB.Quantity,
             bookMongoDB.Price,
             bookMongoDB.Year,
-            bookMongoDB.Preservation);
+            bookMongoDB.Preservation,
+            bookMongoDB.IsDeleted);
     }
 
     public static BookMongoDB ToMongoDBEntity(Book book)

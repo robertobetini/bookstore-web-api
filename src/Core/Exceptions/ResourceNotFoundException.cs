@@ -1,5 +1,6 @@
 ﻿namespace Core.Exceptions;
 
+[Serializable]
 public abstract class ResourceNotFoundException : Exception
 {
 	protected const string DEFAULT_ERROR_MESSAGE = "{0} not found.";

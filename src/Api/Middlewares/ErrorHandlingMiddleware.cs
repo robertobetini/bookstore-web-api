@@ -25,7 +25,12 @@ public class ErrorHandlingMiddleware
 			HandleError(context, exception, HttpStatusCode.NotFound);
 			_logger.LogWarning(exception, exception.Message);
 		}
-		catch (Exception exception)
+        catch (ResourceAlreadyDeletedException exception)
+        {
+            HandleError(context, exception, HttpStatusCode.Gone);
+            _logger.LogWarning(exception, exception.Message);
+        }
+        catch (Exception exception)
 		{
             HandleError(context, exception, HttpStatusCode.InternalServerError);
             _logger.LogError(exception, exception.Message);

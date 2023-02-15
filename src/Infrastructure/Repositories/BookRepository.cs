@@ -21,8 +21,9 @@ public class BookRepository : IBookRepository
 
     public async Task<IEnumerable<Book>> GetManyAsync(CancellationToken cancellationToken = default)
     {
+        var filter = GetIgnoreDeletedFilter();
         var result = (await _collection
-            .FindAsync(_bookFilter.Empty, cancellationToken: cancellationToken))
+            .FindAsync(filter, cancellationToken: cancellationToken))
             .ToEnumerable();
 
         return BookAdapter.ToDomainEntities(result);
@@ -30,7 +31,7 @@ public class BookRepository : IBookRepository
 
     public async Task<Book> GetOneAsync(string bookId, CancellationToken cancellationToken = default)
     {
-        var filter = _bookFilter.Eq(b => b.Id, bookId);
+        var filter = _bookFilter.Eq(b => b.Id, bookId) & GetIgnoreDeletedFilter();
         var result = await _collection
             .Find(filter)
             .FirstOrDefaultAsync(cancellationToken);
@@ -47,52 +48,57 @@ public class BookRepository : IBookRepository
 
     public async Task UpdateAsync(string bookId, Book book, CancellationToken cancellationToken = default)
     {
-        var filter = _bookFilter.Eq(b => b.Id, bookId);
+        var filter = _bookFilter.Eq(b => b.Id, bookId) & GetIgnoreDeletedFilter();
         var updates = new List<UpdateDefinition<BookMongoDB>>();
 
-        if (book.Title is not default(string))
+        if (book.Title is not null)
         {
             updates.Add(_bookUpdate.Set(b => b.Title, book.Title));
         }
 
-        if (book.Author is not default(string))
+        if (book.Author is not null)
         {
             updates.Add(_bookUpdate.Set(b => b.Author, book.Author));
         }
 
-        if (book.Edition is not default(int))
+        if (book.Edition is not null)
         {
             updates.Add(_bookUpdate.Set(b => b.Edition, book.Edition));
         }
 
-        if (book.Language is not default(string))
+        if (book.Language is not null)
         {
             updates.Add(_bookUpdate.Set(b => b.Language, book.Language));
         }
 
-        if (book.Publisher is not default(string))
+        if (book.Publisher is not null)
         {
             updates.Add(_bookUpdate.Set(b => b.Publisher, book.Publisher));
         }
 
-        if (book.Pages is not default(int))
+        if (book.Pages is not null)
         {
             updates.Add(_bookUpdate.Set(b => b.Pages, book.Pages));
         }
 
-        if (book.Price is not default(int))
+        if (book.Price is not null)
         {
             updates.Add(_bookUpdate.Set(b => b.Price, book.Price));
         }
 
-        if (book.Year is not default(int))
+        if (book.Year is not null)
         {
             updates.Add(_bookUpdate.Set(b => b.Year, book.Year));
         }
 
-        if (book.Preservation is not BookPreservation.Undefined)
+        if (book.Preservation is not null && book.Preservation is not BookPreservation.Undefined)
         {
             updates.Add(_bookUpdate.Set(b => b.Preservation, book.Preservation));
+        }
+
+        if (!updates.Any())
+        {
+            return;
         }
 
         var finalUpdate = _bookUpdate.Combine(updates);
@@ -103,6 +109,9 @@ public class BookRepository : IBookRepository
     public async Task DeleteAsync(string bookId, CancellationToken cancellationToken = default)
     {
         var filter = _bookFilter.Eq(b => b.Id, bookId);
-        _ = await _collection.DeleteOneAsync(filter, cancellationToken: cancellationToken);
+        var update = _bookUpdate.Set(b => b.IsDeleted, true);
+        _ = await _collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
     }
+
+    private FilterDefinition<BookMongoDB> GetIgnoreDeletedFilter() => _bookFilter.Ne(b => b.IsDeleted, false);
 }
