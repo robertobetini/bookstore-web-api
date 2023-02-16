@@ -1,6 +1,5 @@
 using Api.Adapters;
 using Api.DTOs.Request;
-using Core.Entities;
 using Core.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,8 +44,8 @@ public class BooksController : ControllerBase
     [HttpPatch]
     [Route("{bookId}")]
     public async Task<IActionResult> Update(
-        [FromRoute] string bookId, 
-        [FromBody] UpdateBookDTO bookDTO, 
+        [FromRoute] string bookId,
+        [FromBody] UpdateBookDTO bookDTO,
         CancellationToken cancellationToken)
     {
         var book = BookAdapter.ToDomainEntity(bookDTO);

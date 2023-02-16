@@ -22,15 +22,15 @@ class BookMongoDB : MongoDBEntity
     public BookMongoDB() { }
 
     public BookMongoDB(
-        string? title, 
-        string? author, 
-        int? edition, 
-        string? language, 
-        string? publisher, 
-        int? pages, 
-        int? quantity, 
-        double? price, 
-        int? year, 
+        string? title,
+        string? author,
+        int? edition,
+        string? language,
+        string? publisher,
+        int? pages,
+        int? quantity,
+        double? price,
+        int? year,
         BookPreservation? preservation = BookPreservation.Undefined,
         string? id = null)
     {

@@ -18,5 +18,4 @@ public static class ProblemDetailsFactory
             Type = PROBLEM_DETAILS_TYPE
         };
     }
-
 }

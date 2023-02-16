@@ -38,7 +38,7 @@ public class BookRepository : IBookRepository
     {
         var filter = _bookFilter.Eq(b => b.Id, bookId);
         if (!retrieveDeleted)
-        { 
+        {
             filter &= GetIgnoreDeletedFilter();
         }
 
