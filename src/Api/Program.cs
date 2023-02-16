@@ -1,3 +1,4 @@
+using Api.Extensions;
 using Core.Repositories.Interfaces;
 using Core.Services;
 using Core.Services.Interfaces;
@@ -31,6 +32,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseErrorHandlingMiddleware();
 
 app.Run();
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Api.DTOs.Request;
 
-public class CreateBookDTO
+public class ReplaceBookDTO
 {
     [Required]
     public string Title { get; init; }

@@ -31,7 +31,8 @@ class BookMongoDB : MongoDBEntity
         int? quantity, 
         double? price, 
         int? year, 
-        BookPreservation? preservation = BookPreservation.Undefined)
+        BookPreservation? preservation = BookPreservation.Undefined,
+        string? id = null)
     {
         Title = title;
         Author = author;
@@ -43,5 +44,10 @@ class BookMongoDB : MongoDBEntity
         Price = price;
         Year = year;
         Preservation = preservation;
+
+        if (id is not null)
+        {
+            Id = id;
+        }
     }
 }

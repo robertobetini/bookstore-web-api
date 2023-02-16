@@ -5,7 +5,7 @@ namespace Infrastructure.Adapters;
 
 static class BookAdapter
 {
-    public static Book ToDomainEntity(BookMongoDB? bookMongoDB)
+    public static Book? ToDomainEntity(BookMongoDB? bookMongoDB)
     {
         if (bookMongoDB is null)
         {
@@ -26,7 +26,7 @@ static class BookAdapter
             bookMongoDB.IsDeleted);
     }
 
-    public static BookMongoDB ToMongoDBEntity(Book book)
+    public static BookMongoDB? ToMongoDBEntity(Book book, string? bookId = null)
     {
         if (book is null)
         {
@@ -43,15 +43,16 @@ static class BookAdapter
             book.Quantity,
             book.Price,
             book.Year,
-            book.Preservation);
+            book.Preservation,
+            bookId);
     }
 
-    public static IEnumerable<Book> ToDomainEntities(IEnumerable<BookMongoDB> booksMongoDB)
+    public static IEnumerable<Book?> ToDomainEntities(IEnumerable<BookMongoDB> booksMongoDB)
     {
         return booksMongoDB.Select(bookMongoDB => ToDomainEntity(bookMongoDB));
     }
 
-    public static IEnumerable<BookMongoDB> ToMongoDBEntities(IEnumerable<Book> books)
+    public static IEnumerable<BookMongoDB?> ToMongoDBEntities(IEnumerable<Book> books)
     {
         return books.Select(book => ToMongoDBEntity(book));
     }

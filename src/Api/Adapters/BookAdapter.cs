@@ -46,6 +46,26 @@ static class BookAdapter
             bookDTO.Preservation);
     }
 
+    public static Book ToDomainEntity(ReplaceBookDTO bookDTO)
+    {
+        if (bookDTO is null)
+        {
+            return default;
+        }
+
+        return new Book(
+            bookDTO.Title,
+            bookDTO.Author,
+            bookDTO.Edition,
+            bookDTO.Language,
+            bookDTO.Publisher,
+            bookDTO.Pages,
+            bookDTO.Quantity,
+            bookDTO.Price,
+            bookDTO.Year,
+            bookDTO.Preservation);
+    }
+
     public static GetBookDTO ToGetBookDTO(Book book)
     {
         if (book is null)

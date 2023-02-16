@@ -14,14 +14,14 @@ public class BookService : IBookService
         _bookRepository = bookRepository;
     }
 
-    public async Task<IEnumerable<Book>> GetManyAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Book>> GetManyAsync(bool retriveDeleted = false, CancellationToken cancellationToken = default)
     {
-        return await _bookRepository.GetManyAsync(cancellationToken);
+        return await _bookRepository.GetManyAsync(retriveDeleted, cancellationToken);
     }
 
-    public async Task<Book> GetOneAsync(string bookId, CancellationToken cancellationToken = default)
+    public async Task<Book> GetOneAsync(string bookId, bool retrieveDeleted = false, CancellationToken cancellationToken = default)
     {
-        var book = await _bookRepository.GetOneAsync(bookId, cancellationToken);
+        var book = await _bookRepository.GetOneAsync(bookId, retrieveDeleted, cancellationToken);
 
         if (book is null)
         {
@@ -38,13 +38,43 @@ public class BookService : IBookService
 
     public async Task UpdateAsync(string bookId, Book book, CancellationToken cancellationToken = default)
     {
+        var bookToUpdate = await GetOneAsync(bookId, true, cancellationToken);
+        EnsureBookIsFound(bookToUpdate);
+
         await _bookRepository.UpdateAsync(bookId, book, cancellationToken);
+    }
+
+    public async Task UpdateQuantityAsync(string bookId, int quantity, CancellationToken cancellationToken = default)
+    {
+        var book = await _bookRepository.GetOneAsync(bookId, true, cancellationToken);
+        EnsureBookIsFound(book);
+
+        if (quantity < 0)
+        {
+            throw new InvalidQuantityToUpdateException();
+        }
+
+        await _bookRepository.UpdateQuantityAsync(bookId, quantity, cancellationToken);
+    }
+
+    public async Task ReplaceAsync(string bookId, Book book, CancellationToken cancellationToken = default)
+    {
+        var bookToReplace = await _bookRepository.GetOneAsync(bookId, true, cancellationToken);
+        EnsureBookIsFound(bookToReplace);
+
+        await _bookRepository.ReplaceAsync(bookId, book, cancellationToken);
     }
 
     public async Task DeleteAsync(string bookId, CancellationToken cancellationToken = default)
     {
-        var book = await GetOneAsync(bookId, cancellationToken);
+        var book = await GetOneAsync(bookId, true, cancellationToken);
+        EnsureBookIsFound(book);
 
+        await _bookRepository.DeleteAsync(bookId, cancellationToken);
+    }
+
+    private void EnsureBookIsFound(Book book)
+    {
         if (book is null)
         {
             throw new BookNotFoundException();
@@ -54,7 +84,5 @@ public class BookService : IBookService
         {
             throw new BookAlreadyDeletedException();
         }
-
-        await _bookRepository.DeleteAsync(bookId, cancellationToken);
     }
 }

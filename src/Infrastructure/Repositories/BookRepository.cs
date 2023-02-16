@@ -19,9 +19,14 @@ public class BookRepository : IBookRepository
         _collection = context.Database.GetCollection<BookMongoDB>("books");
     }
 
-    public async Task<IEnumerable<Book>> GetManyAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Book>> GetManyAsync(bool retrieveDeleted = false, CancellationToken cancellationToken = default)
     {
-        var filter = GetIgnoreDeletedFilter();
+        var filter = _bookFilter.Empty;
+        if (!retrieveDeleted)
+        {
+            filter &= GetIgnoreDeletedFilter();
+        }
+
         var result = (await _collection
             .FindAsync(filter, cancellationToken: cancellationToken))
             .ToEnumerable();
@@ -29,9 +34,14 @@ public class BookRepository : IBookRepository
         return BookAdapter.ToDomainEntities(result);
     }
 
-    public async Task<Book> GetOneAsync(string bookId, CancellationToken cancellationToken = default)
+    public async Task<Book> GetOneAsync(string bookId, bool retrieveDeleted = false, CancellationToken cancellationToken = default)
     {
-        var filter = _bookFilter.Eq(b => b.Id, bookId) & GetIgnoreDeletedFilter();
+        var filter = _bookFilter.Eq(b => b.Id, bookId);
+        if (!retrieveDeleted)
+        { 
+            filter &= GetIgnoreDeletedFilter();
+        }
+
         var result = await _collection
             .Find(filter)
             .FirstOrDefaultAsync(cancellationToken);
@@ -106,6 +116,22 @@ public class BookRepository : IBookRepository
         _ = await _collection.UpdateOneAsync(filter, finalUpdate, cancellationToken: cancellationToken);
     }
 
+    public async Task UpdateQuantityAsync(string bookId, int quantity, CancellationToken cancellationToken = default)
+    {
+        var filter = _bookFilter.Eq(b => b.Id, bookId) & GetIgnoreDeletedFilter();
+        var update = _bookUpdate.Set(b => b.Quantity, quantity);
+
+        _ = await _collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+    }
+
+    public async Task ReplaceAsync(string bookId, Book book, CancellationToken cancellationToken = default)
+    {
+        var filter = _bookFilter.Eq(b => b.Id, bookId) & GetIgnoreDeletedFilter();
+        var bookMongoDB = BookAdapter.ToMongoDBEntity(book);
+
+        _ = await _collection.ReplaceOneAsync(filter, bookMongoDB, cancellationToken: cancellationToken);
+    }
+
     public async Task DeleteAsync(string bookId, CancellationToken cancellationToken = default)
     {
         var filter = _bookFilter.Eq(b => b.Id, bookId);
@@ -113,5 +139,5 @@ public class BookRepository : IBookRepository
         _ = await _collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
     }
 
-    private FilterDefinition<BookMongoDB> GetIgnoreDeletedFilter() => _bookFilter.Ne(b => b.IsDeleted, false);
+    private FilterDefinition<BookMongoDB> GetIgnoreDeletedFilter() => _bookFilter.Eq(b => b.IsDeleted, false);
 }
