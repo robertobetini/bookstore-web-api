@@ -1,5 +1,4 @@
-﻿using Core.Entities.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Api.DTOs.Request;
 
@@ -9,13 +8,10 @@ public class CreateUserDTO
     public string Username { get; init; }
     [Required]
     public string Password { get; init; }
-    [Required]
-    public AccessLevel AccessLevel { get; init; }
 
-    public CreateUserDTO(string username, string password, AccessLevel accessLevel)
+    public CreateUserDTO(string username, string password)
     {
         Username = username;
         Password = password;
-        AccessLevel = accessLevel;
     }
 }

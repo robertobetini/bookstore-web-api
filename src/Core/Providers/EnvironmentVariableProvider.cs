@@ -1,11 +1,10 @@
 ﻿using Core.Exceptions;
-using Core.Providers.Interfaces;
 
 namespace Core.Providers;
 
-public class EnvironmentVariableProvider : IEnvironmentVariableProvider
+public static class EnvironmentVariableProvider
 {
-    public string GetValue(string variableKey)
+    public static string GetValue(string variableKey)
     {
         var variableValue = Environment.GetEnvironmentVariable(variableKey);
         if (string.IsNullOrEmpty(variableValue))
@@ -16,7 +15,7 @@ public class EnvironmentVariableProvider : IEnvironmentVariableProvider
         return variableValue;
     }
 
-    public bool TryGetValue(string variableKey, out string? variableValue)
+    public static bool TryGetValue(string variableKey, out string? variableValue)
     {
         try
         {

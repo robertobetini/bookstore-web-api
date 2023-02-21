@@ -1,6 +1,7 @@
 ﻿using Api.Adapters;
 using Api.DTOs.Request;
 using Api.DTOs.Response;
+using Core.Entities;
 using Core.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +19,12 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(
+    public async Task<IActionResult> CreateRegularUser(
         [FromBody] CreateUserDTO userDTO,
         CancellationToken cancellationToken)
     {
         var user = UserAdapter.ToDomainEntity(userDTO);
-        await _userService.Create(user, cancellationToken);
+        await _userService.CreateRegularUser(user, cancellationToken);
 
         return NoContent();
     }

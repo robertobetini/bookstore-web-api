@@ -21,7 +21,10 @@ public class UserRepository : IUserRepository, IDisposable
         _tableName = mysqlContext.TableName;
     }
 
-    public async Task<User?> Get(string username, string password, CancellationToken cancellationToken = default)
+    public async Task<User?> GetUser(
+        string username,
+        string password,
+        CancellationToken cancellationToken = default)
     {
         await OpenConnectionAsync(cancellationToken);
 
@@ -34,14 +37,31 @@ public class UserRepository : IUserRepository, IDisposable
         return UserAdapter.ToDomainEntity(userMySQL);
     }
 
-    public async Task Create(string username, string password, AccessLevel accessLevel, CancellationToken cancellationToken = default)
+    public async Task CreateUser(
+        string username,
+        string password,
+        AccessLevel userAccessLevel,
+        CancellationToken cancellationToken = default)
     {
         await OpenConnectionAsync(cancellationToken);
 
-        var query = $"INSERT INTO {_tableName} VALUES ('{username}', '{password}', '{accessLevel}')";
+        var query = $"INSERT INTO {_tableName} VALUES ('{username}', '{password}', '{userAccessLevel}')";
         _ = await _connection.ExecuteAsync(query);
 
         await CloseConnectionAsync(cancellationToken);
+    }
+
+    public async Task<User?> GetOwnerUser(CancellationToken cancellationToken = default)
+    {
+        await OpenConnectionAsync(cancellationToken);
+
+        var query = $"SELECT username, accessLevel FROM users WHERE accessLevel = '{AccessLevel.Owner}'";
+        var usersMySQL = await _connection.QueryAsync<UserMySQL>(query);
+
+        await CloseConnectionAsync(cancellationToken);
+
+        var userMySQL = usersMySQL.FirstOrDefault();
+        return UserAdapter.ToDomainEntity(userMySQL);
     }
 
     public void Dispose()

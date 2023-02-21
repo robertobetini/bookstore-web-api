@@ -1,4 +1,5 @@
-﻿using Core.Repositories.Interfaces;
+﻿using Core;
+using Core.Repositories.Interfaces;
 using Infrastructure.DbContexts.MongoDB;
 using Infrastructure.DbContexts.MongoDB.Interfaces;
 using Infrastructure.DbContexts.MySQL;
@@ -11,7 +12,6 @@ public static class InfrastructureExtensions
 {
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-
         return services
             .AddBookRepository()
             .AddUserRepository();
@@ -19,18 +19,18 @@ public static class InfrastructureExtensions
 
     private static IServiceCollection AddUserRepository(this IServiceCollection services)
     {
-
-        var mysqlConnectionString = Environment.GetEnvironmentVariable("UserMySQLConnection");
+        var userMySQLConnectionKey = Constants.EnvironmentVariableKeys.USER_MYSQL_CONNECTION;
+        var mysqlConnectionString = Environment.GetEnvironmentVariable(userMySQLConnectionKey);
 
         return services
             .AddSingleton<IUserRepository, UserRepository>()
-            .AddSingleton<IUserMySQLContext>(
-                provider => new UserMySQLContext(mysqlConnectionString));
+            .AddSingleton<IUserMySQLContext>(provider => new UserMySQLContext(mysqlConnectionString));
     }
 
     private static IServiceCollection AddBookRepository(this IServiceCollection services)
     {
-        var mongoConnectionString = Environment.GetEnvironmentVariable("BookstoreMongoDBConnection");
+        var bookstoreMongoDBConnectionKey = Constants.EnvironmentVariableKeys.BOOKSTORE_MONGODB_CONNECTION;
+        var mongoConnectionString = Environment.GetEnvironmentVariable(bookstoreMongoDBConnectionKey);
 
         return services
             .AddSingleton<IBookRepository, BookRepository>()

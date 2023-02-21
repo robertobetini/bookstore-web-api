@@ -9,5 +9,7 @@ public enum AccessLevel
     [Description("Regular")]
     Regular,
     [Description("Admin")]
-    Admin
+    Admin,
+    [Description("Owner")]
+    Owner
 }

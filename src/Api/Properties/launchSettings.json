@@ -13,7 +13,9 @@
         "JwtIssuer": "localhost",
         "JwtAudience": "BookstoreApi",
         "JwtSecret": "secretTokenValue",
-        "JwtTokenLifetime": "60"
+        "JwtTokenLifetime": "60",
+        "OwnerDefaultUser": "owner",
+        "OwnerDefaultPassword": "123456"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7126;http://localhost:5126"
@@ -29,7 +31,9 @@
         "JwtIssuer": "localhost",
         "JwtAudience": "BookstoreApi",
         "JwtSecret": "secretTokenValue",
-        "JwtTokenLifetime": "60"
+        "JwtTokenLifetime": "60",
+        "OwnerDefaultUser": "owner",
+        "OwnerDefaultPassword": "123456"
       }
     },
     "Docker": {
@@ -47,7 +51,9 @@
         "JwtIssuer": "localhost",
         "JwtAudience": "BookstoreApi",
         "JwtSecret": "secretTokenValue",
-        "JwtTokenLifetime": "60"
+        "JwtTokenLifetime": "60",
+        "OwnerDefaultUser": "owner",
+        "OwnerDefaultPassword": "123456"
       }
     }
   },
