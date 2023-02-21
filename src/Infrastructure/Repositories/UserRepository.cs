@@ -64,6 +64,38 @@ public class UserRepository : IUserRepository, IDisposable
         return UserAdapter.ToDomainEntity(userMySQL);
     }
 
+    public async Task<AccessLevel?> GetUserAccessLevel(string username, CancellationToken cancellationToken = default)
+    {
+        await OpenConnectionAsync(cancellationToken);
+
+        var query = $"SELECT accessLevel FROM users WHERE username = '{username}'";
+        var userAccessLevels = await _connection.QueryAsync<AccessLevel>(query);
+
+        await CloseConnectionAsync(cancellationToken);
+
+        return userAccessLevels.FirstOrDefault();
+    }
+
+    public async Task UpdateUserPassword(string username, string newPassword, CancellationToken cancellationToken = default)
+    {
+        await OpenConnectionAsync(cancellationToken);
+
+        var query = $"UPDATE {_tableName} SET password = '{newPassword}' WHERE username = '{username}'";
+        _ = await _connection.ExecuteAsync(query);
+
+        await CloseConnectionAsync(cancellationToken);
+    }
+
+    public async Task UpdateUserAccessLevel(string username, AccessLevel userAccessLevel, CancellationToken cancellationToken = default)
+    {
+        await OpenConnectionAsync(cancellationToken);
+
+        var query = $"UPDATE {_tableName} SET accessLevel = '{userAccessLevel}' WHERE username = '{username}'";
+        _ = await _connection.ExecuteAsync(query);
+
+        await CloseConnectionAsync(cancellationToken);
+    }
+
     public void Dispose()
     {
         if (_connection.State == ConnectionState.Open)

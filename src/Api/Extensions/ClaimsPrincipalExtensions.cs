@@ -24,7 +24,7 @@ public static class ClaimsPrincipalExtensions
         return accessLevel >= AccessLevel.Owner;
     }
 
-    private static Claim? GetClaim(this ClaimsPrincipal claimsPrincipal, JwtClaim jwtClaim)
+    public static Claim? GetClaim(this ClaimsPrincipal claimsPrincipal, JwtClaim jwtClaim)
     {
         return claimsPrincipal
             .Claims

@@ -1,9 +1,9 @@
 ﻿namespace Core.Exceptions;
 
 [Serializable]
-public class OwnerAlreadyExists : BusinessException
+public class OwnerAlreadyExists : DuplicateResourceException
 {
-    private const string DEFAULT_ERROR_MESSAGE = "Can't have more than one owner, ownership is already claimed.";
+    private const string RESOURCE = "Owner";
 
-    public OwnerAlreadyExists() : base(DEFAULT_ERROR_MESSAGE) { }
+    public OwnerAlreadyExists() : base(RESOURCE) { }
 }

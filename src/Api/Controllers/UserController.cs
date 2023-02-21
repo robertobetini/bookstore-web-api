@@ -1,8 +1,11 @@
 ﻿using Api.Adapters;
 using Api.DTOs.Request;
 using Api.DTOs.Response;
-using Core.Entities;
+using Api.Extensions;
+using Core.Entities.Enums;
+using Core.Enums;
 using Core.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -45,5 +48,36 @@ public class UserController : ControllerBase
         var response = new SuccessfulAuthenticationDTO(token);
 
         return Ok(response);
+    }
+
+    [Authorize]
+    [HttpPatch]
+    [Route("password")]
+    public async Task<IActionResult> UpdatePassword(
+        [FromBody] UpdatePasswordDTO userDTO,
+        CancellationToken cancellationToken)
+    {
+        var usernameClaim = User.GetClaim(JwtClaim.Username);
+        await _userService.UpdateUserPassword(usernameClaim?.Value, userDTO.Password, cancellationToken);
+
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpPatch]
+    [Route("{username}/access-level")]
+    public async Task<IActionResult> UpdateAccessLevel(
+        [FromRoute] string username,
+        [FromBody] UpdateUserAccessLevelDTO userDTO,
+        CancellationToken cancellationToken)
+    {
+        if (!User.HasOwnerAccess())
+        {
+            return Forbid();
+        }
+
+        await _userService.UpdateUserAccessLevel(username, userDTO.AccessLevel, cancellationToken);
+
+        return NoContent();
     }
 }

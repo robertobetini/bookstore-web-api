@@ -34,7 +34,7 @@ public class UserService : IUserService
         var existingUser = await _userRepository.GetUser(hashedUsername, hashedPassword, cancellationToken);
         if (existingUser is not null)
         {
-            return _tokenService.GenerateToken(existingUser.Username, existingUser.AccessLevel);
+            return _tokenService.GenerateToken(user.Username, existingUser.AccessLevel);
         }
 
         return default;
@@ -64,6 +64,46 @@ public class UserService : IUserService
     {
         user.TurnRegularUser();
         await CreateUser(user, cancellationToken);
+    }
+
+    public async Task UpdateUserPassword(string username, string newPassword, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrEmpty(username))
+        {
+            throw new UsernameIsNullException();
+        }
+
+        var hashedUsername = _hashService.GenerateHash(username);
+        var hashedNewPassword = _hashService.GenerateHash(newPassword);
+
+        await _userRepository.UpdateUserPassword(hashedUsername, hashedNewPassword, cancellationToken);
+    }
+
+    public async Task UpdateUserAccessLevel(string username, AccessLevel accessLevel, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrEmpty(username))
+        {
+            throw new UsernameIsNullException();
+        }
+
+        if (accessLevel is AccessLevel.None)
+        {
+            throw new InvalidUserAccessLevel();
+        }
+
+        if (accessLevel is AccessLevel.Owner)
+        {
+            throw new OwnerAlreadyExists();
+        }
+
+        var hashedUsername = _hashService.GenerateHash(username);
+        var userCurrentAccessLevel = await _userRepository.GetUserAccessLevel(username, cancellationToken);
+        if (userCurrentAccessLevel == AccessLevel.Owner)
+        {
+            throw new UpdateOwnerAccessLevelException();
+        }
+
+        await _userRepository.UpdateUserAccessLevel(hashedUsername, accessLevel, cancellationToken);
     }
 
     private async Task CreateUser(User user, CancellationToken cancellationToken = default)
