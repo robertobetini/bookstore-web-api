@@ -68,23 +68,6 @@ public class BooksController : ControllerBase
     }
 
     [Authorize]
-    [HttpPatch]
-    [Route("{bookId}/quantity")]
-    public async Task<IActionResult> UpdateBookQuantity(
-        [FromRoute] string bookId,
-        [FromBody] UpdateBookQuantityDTO bookDTO,
-        CancellationToken cancellationToken)
-    {
-        if (!User.HasAdminAccess())
-        {
-            return Forbid();
-        }
-
-        await _bookService.UpdateQuantityAsync(bookId, (int)bookDTO.Quantity!, cancellationToken);
-        return NoContent();
-    }
-
-    [Authorize]
     [HttpPut]
     [Route("{bookId}")]
     public async Task<IActionResult> Replace(
