@@ -2,7 +2,6 @@
 using Api.DTOs.Request;
 using Api.DTOs.Response;
 using Core.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -12,14 +11,10 @@ namespace Api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly ITokenService _tokenService;
 
-    public UserController(
-        IUserService userService,
-        ITokenService tokenService)
+    public UserController(IUserService userService)
     {
         _userService = userService;
-        _tokenService = tokenService;
     }
 
     [HttpPost]
@@ -28,7 +23,7 @@ public class UserController : ControllerBase
         CancellationToken cancellationToken)
     {
         var user = UserAdapter.ToDomainEntity(userDTO);
-        await _userService.Create(user);
+        await _userService.Create(user, cancellationToken);
 
         return NoContent();
     }
@@ -40,7 +35,7 @@ public class UserController : ControllerBase
         CancellationToken cancellationToken)
     {
         var user = UserAdapter.ToDomainEntity(userDTO);
-        var token = await _userService.Authenticate(user);
+        var token = await _userService.Authenticate(user, cancellationToken);
         if (string.IsNullOrWhiteSpace(token))
         {
             return Unauthorized();
