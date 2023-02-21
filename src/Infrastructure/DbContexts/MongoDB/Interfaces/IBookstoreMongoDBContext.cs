@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 
-namespace Infrastructure.DbContexts.Interfaces;
+namespace Infrastructure.DbContexts.MongoDB.Interfaces;
 
 public interface IBookstoreMongoDBContext
 {

@@ -1,7 +1,7 @@
-﻿using Infrastructure.DbContexts.Interfaces;
+﻿using Infrastructure.DbContexts.MongoDB.Interfaces;
 using MongoDB.Driver;
 
-namespace Infrastructure.DbContexts;
+namespace Infrastructure.DbContexts.MongoDB;
 
 public class BookstoreMongoDBContext : IBookstoreMongoDBContext
 {

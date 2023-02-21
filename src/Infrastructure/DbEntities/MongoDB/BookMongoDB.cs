@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Infrastructure.DbEntities;
+namespace Infrastructure.DbEntities.MongoDB;
 
 class BookMongoDB : MongoDBEntity
 {

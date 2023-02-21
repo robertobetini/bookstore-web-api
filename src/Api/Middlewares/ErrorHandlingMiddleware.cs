@@ -31,6 +31,11 @@ public class ErrorHandlingMiddleware
             await HandleError(context, exception, HttpStatusCode.NotFound);
             _logger.LogWarning(exception, exception.Message);
         }
+        catch (DuplicateResourceException exception)
+        {
+            await HandleError(context, exception, HttpStatusCode.Conflict);
+            _logger.LogWarning(exception, exception.Message);
+        }
         catch (ResourceAlreadyDeletedException exception)
         {
             await HandleError(context, exception, HttpStatusCode.Gone);

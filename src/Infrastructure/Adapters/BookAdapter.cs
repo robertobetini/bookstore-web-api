@@ -1,5 +1,5 @@
 ﻿using Core.Entities;
-using Infrastructure.DbEntities;
+using Infrastructure.DbEntities.MongoDB;
 
 namespace Infrastructure.Adapters;
 

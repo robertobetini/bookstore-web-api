@@ -7,7 +7,8 @@ public abstract class ResourceAlreadyDeletedException : Exception
 
     protected readonly string Resource;
 
-    public ResourceAlreadyDeletedException(string resource = "Resource") : base(string.Format(DEFAULT_ERROR_MESSAGE, resource))
+    public ResourceAlreadyDeletedException(string resource = "Resource") 
+        : base(string.Format(DEFAULT_ERROR_MESSAGE, resource))
     {
         Resource = resource;
     }

@@ -2,8 +2,8 @@
 using Core.Entities.Enums;
 using Core.Repositories.Interfaces;
 using Infrastructure.Adapters;
-using Infrastructure.DbContexts.Interfaces;
-using Infrastructure.DbEntities;
+using Infrastructure.DbContexts.MongoDB.Interfaces;
+using Infrastructure.DbEntities.MongoDB;
 using MongoDB.Driver;
 
 namespace Infrastructure.Repositories;
