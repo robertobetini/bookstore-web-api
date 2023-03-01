@@ -56,9 +56,4 @@ public class JwtTokenService : ITokenService
 
         return tokenHandler.WriteToken(token);
     }
-
-    public bool ValidateToken(string token)
-    {
-        throw new NotImplementedException();
-    }
 }
