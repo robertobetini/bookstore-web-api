@@ -48,7 +48,10 @@ public class ErrorHandlingMiddleware
         }
     }
 
-    private async Task HandleError(HttpContext context, Exception exception, HttpStatusCode statusCode)
+    private async Task HandleError(
+        HttpContext context, 
+        Exception exception, 
+        HttpStatusCode statusCode)
     {
         context.Response.StatusCode = (int)statusCode;
 

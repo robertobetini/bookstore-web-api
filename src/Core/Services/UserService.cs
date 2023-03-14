@@ -66,7 +66,10 @@ public class UserService : IUserService
         await CreateUser(user, cancellationToken);
     }
 
-    public async Task UpdateUserPassword(string username, string newPassword, CancellationToken cancellationToken = default)
+    public async Task UpdateUserPassword(
+        string username, 
+        string newPassword, 
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(username))
         {
@@ -79,7 +82,10 @@ public class UserService : IUserService
         await _userRepository.UpdateUserPassword(hashedUsername, hashedNewPassword, cancellationToken);
     }
 
-    public async Task UpdateUserAccessLevel(string username, AccessLevel accessLevel, CancellationToken cancellationToken = default)
+    public async Task UpdateUserAccessLevel(
+        string username, 
+        AccessLevel accessLevel, 
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(username))
         {

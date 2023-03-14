@@ -64,7 +64,9 @@ public class UserRepository : IUserRepository, IDisposable
         return UserAdapter.ToDomainEntity(userMySQL);
     }
 
-    public async Task<AccessLevel?> GetUserAccessLevel(string username, CancellationToken cancellationToken = default)
+    public async Task<AccessLevel?> GetUserAccessLevel(
+        string username, 
+        CancellationToken cancellationToken = default)
     {
         await OpenConnectionAsync(cancellationToken);
 
@@ -76,7 +78,10 @@ public class UserRepository : IUserRepository, IDisposable
         return userAccessLevels.FirstOrDefault();
     }
 
-    public async Task UpdateUserPassword(string username, string newPassword, CancellationToken cancellationToken = default)
+    public async Task UpdateUserPassword(
+        string username, 
+        string newPassword, 
+        CancellationToken cancellationToken = default)
     {
         await OpenConnectionAsync(cancellationToken);
 
@@ -86,7 +91,10 @@ public class UserRepository : IUserRepository, IDisposable
         await CloseConnectionAsync(cancellationToken);
     }
 
-    public async Task UpdateUserAccessLevel(string username, AccessLevel userAccessLevel, CancellationToken cancellationToken = default)
+    public async Task UpdateUserAccessLevel(
+        string username, 
+        AccessLevel userAccessLevel, 
+        CancellationToken cancellationToken = default)
     {
         await OpenConnectionAsync(cancellationToken);
 

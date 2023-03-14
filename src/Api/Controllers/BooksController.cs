@@ -12,10 +12,14 @@ namespace Api.Controllers;
 public class BooksController : ControllerBase
 {
     private readonly IBookService _bookService;
+    private readonly IBookPhotoUploadService _bookPhotoUploadService;
 
-    public BooksController(IBookService bookService)
+    public BooksController(
+        IBookService bookService,
+        IBookPhotoUploadService bookPhotoUploadService)
     {
         _bookService = bookService;
+        _bookPhotoUploadService = bookPhotoUploadService;
     }
 
     [HttpGet]
@@ -103,5 +107,26 @@ public class BooksController : ControllerBase
 
         await _bookService.DeleteAsync(bookId, cancellationToken);
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpPost]
+    [Route("{bookId}/photos")]
+    public async Task<IActionResult> UploadPhoto(
+        IFormFile photo, 
+        CancellationToken cancellationToken)
+    {
+        if (!User.HasAdminAccess())
+        {
+            return Forbid();
+        }
+
+        await _bookPhotoUploadService.UploadAsync(
+            photo.OpenReadStream(), 
+            photo.ContentType, 
+            photo.Length,
+            cancellationToken);
+
+        return Ok();
     }
 }

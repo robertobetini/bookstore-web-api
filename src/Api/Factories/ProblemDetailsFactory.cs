@@ -7,7 +7,10 @@ public static class ProblemDetailsFactory
 {
     private const string PROBLEM_DETAILS_TYPE = "about:blank";
 
-    public static ProblemDetails Create(HttpContext context, Exception exception, HttpStatusCode statusCode)
+    public static ProblemDetails Create(
+        HttpContext context, 
+        Exception exception, 
+        HttpStatusCode statusCode)
     {
         return new ProblemDetails
         {
