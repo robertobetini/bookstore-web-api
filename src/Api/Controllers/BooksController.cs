@@ -28,7 +28,9 @@ public class BooksController : ControllerBase
 
     [HttpGet]
     [Route("{bookId}")]
-    public async Task<IActionResult> GetOne([FromRoute] string bookId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetOne(
+        [FromRoute] string bookId, 
+        CancellationToken cancellationToken)
     {
         var book = await _bookService.GetOneAsync(bookId, cancellationToken: cancellationToken);
         var response = BookAdapter.ToGetBookDTO(book);
@@ -37,7 +39,9 @@ public class BooksController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateBookDTO bookDTO, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(
+        [FromBody] CreateBookDTO bookDTO, 
+        CancellationToken cancellationToken)
     {
         if (!User.HasAdminAccess())
         {
