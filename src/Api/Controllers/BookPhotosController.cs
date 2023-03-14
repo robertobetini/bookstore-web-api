@@ -2,6 +2,7 @@
 using Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace Api.Controllers;
 
@@ -14,6 +15,19 @@ public class BookPhotosController : ControllerBase
     public BookPhotosController(IBookPhotoService bookPhotoService)
     {
         _bookPhotoService = bookPhotoService;
+    }
+
+    [HttpGet]
+    [Route("{bookId}/photos/{photoId}")]
+    public async Task<IActionResult> GetBookPhotos(
+        [FromRoute] string photoId,
+        CancellationToken cancellationToken)
+    {
+        var photo = await _bookPhotoService.GetBookPhotoAsync(
+            photoId,
+            cancellationToken);
+
+        return Ok(photo);
     }
 
     [Authorize]

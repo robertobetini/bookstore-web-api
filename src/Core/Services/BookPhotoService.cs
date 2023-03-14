@@ -19,6 +19,13 @@ public class BookPhotoService : IBookPhotoService
         _bookPhotoRepository = bookPhotoRepository;
     }
 
+    public async Task<byte[]> GetBookPhotoAsync(
+        string photoId, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _bookPhotoRepository.GetPhoto(photoId, cancellationToken);
+    }
+
     public async Task UploadPhotoAsync(
         string bookId,
         Stream stream,

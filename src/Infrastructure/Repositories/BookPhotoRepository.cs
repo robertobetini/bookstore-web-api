@@ -9,15 +9,24 @@ namespace Infrastructure.Repositories;
 
 public class BookPhotoRepository : IBookPhotoRepository
 {
-    private readonly IGridFSBucket _gridFSBucket;
+    private readonly IGridFSBucket _bucket;
     private readonly IMongoCollection<BookMongoDB> _collection;
     private readonly FilterDefinitionBuilder<BookMongoDB> _bookFilter = Builders<BookMongoDB>.Filter;
     private readonly UpdateDefinitionBuilder<BookMongoDB> _bookUpdate = Builders<BookMongoDB>.Update;
 
     public BookPhotoRepository(IBookstoreMongoDBContext context)
     {
-        _gridFSBucket = new GridFSBucket(context.Database);
+        _bucket = new GridFSBucket(context.Database);
         _collection = context.Database.GetCollection<BookMongoDB>("books");
+    }
+
+    public async Task<byte[]> GetPhoto(
+        string photoId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _bucket.DownloadAsBytesAsync(
+            ObjectId.Parse(photoId), 
+            cancellationToken: cancellationToken);
     }
 
     public async Task<string> SavePhotoAsync(
@@ -36,7 +45,7 @@ public class BookPhotoRepository : IBookPhotoRepository
             }
         };
 
-        var photoId = await _gridFSBucket.UploadFromStreamAsync(
+        var photoId = await _bucket.UploadFromStreamAsync(
             fileName, 
             stream,
             options,
@@ -49,7 +58,7 @@ public class BookPhotoRepository : IBookPhotoRepository
         string photoId, 
         CancellationToken cancellationToken = default)
     {
-        await _gridFSBucket.DeleteAsync(ObjectId.Parse(photoId), cancellationToken);
+        await _bucket.DeleteAsync(ObjectId.Parse(photoId), cancellationToken);
     }
 
     public async Task LinkPhotoToBookAsync(
