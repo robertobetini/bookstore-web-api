@@ -2,5 +2,8 @@
 
 public interface IBookPhotoRepository
 {
-    Task SaveAsync(Stream stream, string contentType, long length, CancellationToken cancellationToken = default);
+    Task<string> SavePhotoAsync(string bookId, Stream stream, string filename, string contentType, CancellationToken cancellationToken = default);
+    Task DeletePhotoAsync(string photoId, CancellationToken cancellationToken = default);
+    Task LinkPhotoToBookAsync(string bookId, string photoId, CancellationToken cancellationToken = default);
+    Task UnlinkPhotoFromBookAsync(string bookId, string photoId, CancellationToken cancellationToken = default);
 }

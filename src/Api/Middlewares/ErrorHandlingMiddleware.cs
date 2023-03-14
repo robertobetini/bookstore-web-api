@@ -41,6 +41,11 @@ public class ErrorHandlingMiddleware
             await HandleError(context, exception, HttpStatusCode.Gone);
             _logger.LogWarning(exception, exception.Message);
         }
+        catch (InvalidImageTypeException exception)
+        {
+            await HandleError(context, exception, HttpStatusCode.BadRequest);
+            _logger.LogWarning(exception, exception.Message);
+        }
         catch (Exception exception)
         {
             await HandleError(context, exception, HttpStatusCode.InternalServerError);
@@ -49,8 +54,8 @@ public class ErrorHandlingMiddleware
     }
 
     private async Task HandleError(
-        HttpContext context, 
-        Exception exception, 
+        HttpContext context,
+        Exception exception,
         HttpStatusCode statusCode)
     {
         context.Response.StatusCode = (int)statusCode;

@@ -9,6 +9,7 @@ public static class CoreExtensions
     {
         return services
             .AddSingleton<IBookService, BookService>()
+            .AddSingleton<IBookPhotoService, BookPhotoService>()
             .AddSingleton<IUserService, UserService>()
             .AddSingleton<IHashService, SHA256HashService>()
             .AddSingleton<ITokenService, JwtTokenService>();

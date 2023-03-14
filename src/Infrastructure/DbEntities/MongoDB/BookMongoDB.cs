@@ -18,6 +18,7 @@ class BookMongoDB : MongoDBEntity
     [BsonRepresentation(BsonType.String)]
     public BookPreservation? Preservation { get; set; }
     public bool IsDeleted { get; init; }
+    public IEnumerable<string> PhotoIds { get; init; }
 
     public BookMongoDB() { }
 
